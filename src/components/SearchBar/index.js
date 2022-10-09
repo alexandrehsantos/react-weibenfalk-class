@@ -1,44 +1,48 @@
-import React, {useState, useEffect, useRef} from "react";
-import PropTypes from 'prop-types';
+import React, { useState, useEffect, useRef, Component } from "react";
+import PropTypes from "prop-types";
 
 import { Wrapper, Content } from "./SearchBar.styles";
-import searchBarIcon from '../../images/search-icon.svg'
+import searchBarIcon from "../../images/search-icon.svg";
 
-const SearchBar = ({ setSearchTerm }) => {
-    const [state, setState] = useState('');
-    const initial = useRef(true);
+class SearchBar extends Component {
+  state = { value: "" };
+  timeout = null;
 
-    useEffect(() =>{
-        //Don't trigger a re-render 
-        if(initial.current){
-            initial.current = false;
-            return;
-        }
+  componentDidUpdate(_prevProps, prevState) {
+    if (this.state.value !== prevState.value) {
+      const { setSearchTerm } = this.props;
+      this.clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        const { value } = this.state;
+        setSearchTerm(this.state);
+      }, 500);
+    }
+  }
 
-        const timer = setTimeout(()=>{
-            setSearchTerm(state);
-        }, 500 )
+  render() {
 
-        return ()=> clearTimeout(timer)
-        },[setSearchTerm,state])
+    const { value } = this.state;
 
     return (
-        <Wrapper>
-            <Content>
-                <img src={searchBarIcon} alt='searchBarIcon' />
-                <input 
-                type='text' 
-                placeholder='Search Movie' 
-                onChange={event => setState(event.currentTarget.value)}
-                value={state}
-                />
-            </Content>
-        </Wrapper>
+      <Wrapper>
+        <Content>
+          <img src={searchBarIcon} alt="searchBarIcon" />
+          <input
+            type="text"
+            placeholder="Search Movie"
+            onChange={(event) =>
+              this.setState({ value: event.currentTarget.value })
+            }
+            value={this.state.value}
+          />
+        </Content>
+      </Wrapper>
     );
+  }
 }
 
 SearchBar.propTypes = {
-    callback: PropTypes.func
+  callback: PropTypes.func,
 };
 
 export default SearchBar;
