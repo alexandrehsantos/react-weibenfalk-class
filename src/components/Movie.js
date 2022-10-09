@@ -14,6 +14,12 @@ import Actor from "./Actor";
 import NoImage from "../images/no_image.jpg";
 
 class Movie extends Component {
+
+  state = {
+    movie: {}, 
+    loading: true, 
+    error: false
+  }
  
   fetchMovie = async () => {
     const { movieId } = this.props.params;
@@ -47,6 +53,8 @@ class Movie extends Component {
 
   render() {
 
+
+    console.log(this.state);
     const  {movie, loading, error } = this.state;
 
 
