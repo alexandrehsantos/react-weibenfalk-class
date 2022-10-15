@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { useParams } from "react-router-dom";
 import { IMAGE_BASE_URL, POSTER_SIZE } from "../config";
 import API from "../API";
+import { Arrow } from "./Movie.styles";
+
 
 //Components
 import Grid from "./Grid";
@@ -12,15 +14,15 @@ import MovieInfoBar from "./MovieInfoBar";
 import Actor from "./Actor";
 
 import NoImage from "../images/no_image.jpg";
+import { FaAngleDoubleDown, FaAngleUp } from "react-icons/fa";
 
 class Movie extends Component {
-
   state = {
-    movie: {}, 
-    loading: true, 
-    error: false
-  }
- 
+    movie: {},
+    loading: true,
+    error: false,
+  };
+
   fetchMovie = async () => {
     const { movieId } = this.props.params;
 
@@ -31,14 +33,14 @@ class Movie extends Component {
       const credits = await API.fetchCredits(movieId);
       // Get directors only
       const directors = credits.crew.filter(
-        member => member.job === "Director"
+        (member) => member.job === "Director"
       );
 
       this.setState({
         movie: {
           ...movie,
           actors: credits.cast,
-          directors
+          directors,
         },
         loading: false,
       });
@@ -47,16 +49,13 @@ class Movie extends Component {
     }
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.fetchMovie();
   }
 
   render() {
-
-
     console.log(this.state);
-    const  {movie, loading, error } = this.state;
-
+    const { movie, loading, error } = this.state;
 
     if (loading) return <Spinner />;
     if (error) return <div>Something went wrong...</div>;
@@ -64,12 +63,16 @@ class Movie extends Component {
     return (
       <>
         <BreadCrumb movieTitle={movie.original_title} />
-        <MovieInfo movie={movie} />
+        <MovieInfo movie={movie}>
+        </MovieInfo>
+        <section id="movie_info_bar">
         <MovieInfoBar
           time={movie.runtime}
           budget={movie.budget}
           revenue={movie.revenue}
         />
+        </section>
+        <section id="actors">
         <Grid header="Actors">
           {movie.actors.map((actor) => (
             <Actor
@@ -84,6 +87,7 @@ class Movie extends Component {
             />
           ))}
         </Grid>
+        </section>
       </>
     );
   }
